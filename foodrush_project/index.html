@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoodRush — Delivered Fast, Served Hot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Leaflet.js for live tracking map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<!-- Loader -->
+<div class="loader" id="loader">
+  <div class="loader-inner">
+    <div class="loader-logo">🔥</div>
+    <div class="loader-text">FoodRush</div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+  </div>
+</div>
+
+<!-- Nav -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <span class="logo-icon">🔥</span>
+      <span class="logo-text">FoodRush</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#restaurants">Restaurants</a></li>
+      <li><a href="#how">How It Works</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-ghost" id="searchToggle">🔍 Search</button>
+      <button class="btn-cart" id="cartToggle">
+        <span>🛒</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+       <button class="btn-primary" id="loginBtn"
+        onclick="window.location.href='http://127.0.0.1:5000/signin'">
+    Sign In
+</button>
+    </div>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="mobileMenuClose">✕</button>
+  <ul>
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#restaurants">Restaurants</a></li>
+    <li><a href="#how">How It Works</a></li>
+  </ul>
+</div>
+
+<!-- Search Overlay -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search food, restaurants..." autocomplete="off" />
+    <button id="searchClose">✕</button>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+</div>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="floating-emojis">
+      <span class="fe" style="--x:10%;--y:20%;--d:3s">🍕</span>
+      <span class="fe" style="--x:80%;--y:15%;--d:2s">🍔</span>
+      <span class="fe" style="--x:25%;--y:70%;--d:4s">🌮</span>
+      <span class="fe" style="--x:70%;--y:65%;--d:2.5s">🍣</span>
+      <span class="fe" style="--x:90%;--y:50%;--d:3.5s">🍜</span>
+      <span class="fe" style="--x:5%;--y:55%;--d:1.8s">🥗</span>
+      <span class="fe" style="--x:50%;--y:10%;--d:2.2s">🍛</span>
+      <span class="fe" style="--x:45%;--y:80%;--d:3.2s">🎂</span>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">⚡ 30-Minute Guarantee</div>
+    <h1 class="hero-title">
+      <span class="line line-1">Hungry?</span>
+      <span class="line line-2">We <em>Rush</em> It</span>
+      <span class="line line-3">To You.</span>
+    </h1>
+    <p class="hero-sub">Fresh from 500+ restaurants. Delivered hot in minutes. No compromise on taste.</p>
+    <div class="hero-search">
+      <div class="location-pill">📍 <span>Pune, MH</span></div>
+      <input type="text" placeholder="What are you craving?" id="heroSearch" />
+      <button class="btn-fire" id="heroSearchBtn">Find Food 🔥</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><strong class="count-up" data-target="500">0</strong><span>Restaurants</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><strong class="count-up" data-target="50000">0</strong><span>Orders Delivered</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><strong class="count-up" data-target="4.9">0</strong><span>Avg Rating ⭐</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="phone-mockup">
+      <div class="phone-screen">
+        <div class="phone-app">
+          <div class="pa-header">🔥 FoodRush</div>
+          <div class="pa-order">
+            <div class="pa-item">🍕 Margherita Pizza</div>
+            <div class="pa-status">
+              <div class="pa-dot active"></div>
+              <div class="pa-line"></div>
+              <div class="pa-dot"></div>
+              <div class="pa-line"></div>
+              <div class="pa-dot"></div>
+            </div>
+            <div class="pa-eta">ETA: <strong>22 mins</strong></div>
+          </div>
+          <div class="pa-map">
+            <div class="map-road"></div>
+            <div class="map-biker" id="mapBiker">🛵</div>
+            <div class="map-dest">🏠</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-cards">
+      <div class="hc hc-1">⚡ Live Tracking</div>
+      <div class="hc hc-2">🛡️ Safe Payments</div>
+      <div class="hc hc-3">🎁 Daily Offers</div>
+    </div>
+  </div>
+  <a href="#menu" class="hero-scroll">↓ Explore Menu</a>
+</section>
+
+<!-- Categories Ticker -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ticker-inner" id="tickerInner">
+      <span>🍕 Pizza</span><span>🍔 Burgers</span><span>🍣 Sushi</span>
+      <span>🍛 Indian</span><span>🌮 Tacos</span><span>🍜 Noodles</span>
+      <span>🥗 Salads</span><span>🧁 Desserts</span><span>🍗 Chicken</span>
+      <span>🌯 Wraps</span><span>🍝 Pasta</span><span>🥤 Drinks</span>
+      <span>🍕 Pizza</span><span>🍔 Burgers</span><span>🍣 Sushi</span>
+      <span>🍛 Indian</span><span>🌮 Tacos</span><span>🍜 Noodles</span>
+      <span>🥗 Salads</span><span>🧁 Desserts</span><span>🍗 Chicken</span>
+      <span>🌯 Wraps</span><span>🍝 Pasta</span><span>🥤 Drinks</span>
+    </div>
+  </div>
+</div>
+
+<!-- Menu Section -->
+<section class="section menu-section" id="menu">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Our Menu</span>
+      <h2 class="section-title">What's <span class="highlight">Trending</span> Today</h2>
+      <p>Hand-picked dishes with the highest ratings this week</p>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn active" data-cat="all">All</button>
+      <button class="filter-btn" data-cat="pizza">🍕 Pizza</button>
+      <button class="filter-btn" data-cat="burger">🍔 Burgers</button>
+      <button class="filter-btn" data-cat="sushi">🍣 Sushi</button>
+      <button class="filter-btn" data-cat="indian">🍛 Indian</button>
+      <button class="filter-btn" data-cat="asian">🍜 Asian</button>
+      <button class="filter-btn" data-cat="pasta">🍝 Pasta</button>
+      <button class="filter-btn" data-cat="desserts">🧁 Desserts</button>
+    </div>
+    <div class="menu-grid" id="menuGrid">
+      <div class="menu-loading">
+        <div class="spinner"></div>
+        <span>Loading delicious food...</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Offer Banner -->
+<div class="offer-banner">
+  <div class="ob-inner">
+    <div class="ob-left">
+      <span class="ob-tag">LIMITED TIME</span>
+      <h3>50% OFF on your first order</h3>
+      <p>Use code <strong>FIRST50</strong> at checkout</p>
+    </div>
+    <div class="ob-right">
+      <div class="ob-emoji">🎉</div>
+      <button class="btn-white" onclick="applyOffer('FIRST50')">Claim Offer</button>
+    </div>
+    <div class="ob-timer" id="obTimer"></div>
+  </div>
+</div>
+
+<!-- Restaurants Section -->
+<section class="section" id="restaurants">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Restaurants</span>
+      <h2 class="section-title">Top <span class="highlight">Picks</span> Near You</h2>
+    </div>
+    <div class="restaurant-grid" id="restaurantGrid">
+      <div class="menu-loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="section how-section" id="how">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Process</span>
+      <h2 class="section-title">How <span class="highlight">FoodRush</span> Works</h2>
+    </div>
+    <div class="how-steps">
+      <div class="how-step" data-step="01">
+        <div class="step-icon">📍</div>
+        <h3>Set Location</h3>
+        <p>Enter your delivery address or let us detect it automatically</p>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step" data-step="02">
+        <div class="step-icon">🍽️</div>
+        <h3>Pick Your Food</h3>
+        <p>Browse menus from hundreds of top-rated restaurants near you</p>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step" data-step="03">
+        <div class="step-icon">💳</div>
+        <h3>Pay Securely</h3>
+        <p>Multiple payment methods. 100% encrypted transactions.</p>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step" data-step="04">
+        <div class="step-icon">🛵</div>
+        <h3>Track & Enjoy</h3>
+        <p>Real-time GPS tracking until your food reaches your door</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Reviews</span>
+      <h2 class="section-title">What Our <span class="highlight">Customers</span> Say</h2>
+    </div>
+    <div class="reviews-grid" id="reviewsGrid">
+      <div class="menu-loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- App Download -->
+<section class="app-section">
+  <div class="app-inner">
+    <div class="app-text">
+      <span class="section-tag">Mobile App</span>
+      <h2>Get FoodRush on Your Phone</h2>
+      <p>Exclusive app-only deals, faster checkout, and real-time notifications.</p>
+      <div class="app-btns">
+        <button class="app-btn"><span>🍎</span><div><small>Download on</small><strong>App Store</strong></div></button>
+        <button class="app-btn"><span>▶</span><div><small>Get it on</small><strong>Google Play</strong></div></button>
+      </div>
+    </div>
+    <div class="app-visual">
+      <div class="app-phone">📱</div>
+      <div class="app-rings">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">🔥 FoodRush</div>
+      <p>Delivering happiness since 2024</p>
+      <div class="footer-social">
+        <a href="#">📘</a><a href="#">📸</a><a href="#">🐦</a><a href="#">▶</a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4>Company</h4>
+      <a href="#">About Us</a><a href="#">Careers</a><a href="#">Blog</a><a href="#">Press</a>
+    </div>
+    <div class="footer-links">
+      <h4>For Restaurants</h4>
+      <a href="#">Partner With Us</a><a href="#">Restaurant Login</a><a href="#">Growth Tools</a>
+    </div>
+    <div class="footer-links">
+      <h4>Help</h4>
+      <a href="#">Track Order</a><a href="#">FAQ</a><a href="#">Contact</a><a href="#">Refund Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 FoodRush. All rights reserved.</p>
+    <p>Built with ❤️ and 🔥 PHP + HTML/CSS/JS</p>
+  </div>
+</footer>
+
+<!-- Cart Sidebar -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>🛒 Your Order</h3>
+    <button id="cartClose">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-empty">
+      <div class="ce-icon">🍽️</div>
+      <p>Your cart is empty</p>
+      <small>Add items to get started</small>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="coupon-row">
+      <input type="text" id="couponInput" placeholder="Enter coupon code" />
+      <button id="applyCoupon">Apply</button>
+    </div>
+    <div class="cart-totals">
+      <div class="ct-row"><span>Subtotal</span><span id="cartSubtotal">₹0</span></div>
+      <div class="ct-row"><span>Delivery Fee</span><span id="cartDelivery">₹40</span></div>
+      <div class="ct-row discount-row" id="discountRow" style="display:none"><span>Discount</span><span id="cartDiscount" class="green">-₹0</span></div>
+      <div class="ct-row total-row"><span>Total</span><strong id="cartTotal">₹0</strong></div>
+    </div>
+    <button class="btn-checkout" id="checkoutBtn">Proceed to Checkout 🚀</button>
+  </div>
+</div>
+
+<!-- Order Success Modal -->
+
+<!-- ════════════════════════════════════════════════════════
+     CHECKOUT FORM MODAL — Collects customer info → saves to MySQL
+     ════════════════════════════════════════════════════════ -->
+<div class="checkout-form-overlay" id="checkoutFormOverlay">
+  <div class="checkout-form-modal">
+    <button class="cf-close" id="closeCheckoutForm" aria-label="Close">✕</button>
+
+    <div class="cf-header">
+      <h2>🛵 Complete Your Order</h2>
+      <p>Fill in your details and we'll deliver to your door</p>
+    </div>
+
+    <form id="deliveryForm" novalidate>
+      <div class="cf-grid">
+
+        <!-- LEFT: Customer Details -->
+        <div class="cf-left">
+          <div class="cf-section-label">👤 Personal Info</div>
+          <div class="cf-row">
+            <div class="cf-field">
+              <label for="cf_name">Full Name *</label>
+              <input type="text" id="cf_name" placeholder="Rahul Sharma" required>
+            </div>
+            <div class="cf-field">
+              <label for="cf_phone">Phone Number *</label>
+              <input type="tel" id="cf_phone" placeholder="9876543210" maxlength="10" required>
+            </div>
+          </div>
+          <div class="cf-field">
+            <label for="cf_email">Email Address *</label>
+            <input type="email" id="cf_email" placeholder="you@email.com" required>
+          </div>
+
+          <div class="cf-section-label" style="margin-top:20px">📍 Delivery Address</div>
+          <div class="cf-field">
+            <label for="cf_address">Street Address *</label>
+            <input type="text" id="cf_address" placeholder="House No, Street, Locality" required>
+          </div>
+          <div class="cf-row">
+            <div class="cf-field">
+              <label for="cf_city">City *</label>
+              <input type="text" id="cf_city" placeholder="Mumbai" required>
+            </div>
+            <div class="cf-field">
+              <label for="cf_pincode">Pincode *</label>
+              <input type="text" id="cf_pincode" placeholder="400001" maxlength="6" required>
+            </div>
+          </div>
+          <div class="cf-field">
+            <label for="cf_note">Special Instructions</label>
+            <input type="text" id="cf_note" placeholder="Extra spicy, no onions...">
+          </div>
+
+          <div class="cf-section-label" style="margin-top:20px">💳 Payment Method</div>
+          <div class="cf-payment-grid">
+            <label class="cf-pay-opt">
+              <input type="radio" name="cf_payment" value="Cash on Delivery" checked>
+              <span>💵 Cash on Delivery</span>
+            </label>
+            <label class="cf-pay-opt">
+              <input type="radio" name="cf_payment" value="PhonePe">
+              <span>📱 PhonePe</span>
+            </label>
+            <label class="cf-pay-opt">
+              <input type="radio" name="cf_payment" value="PayU">
+              <span>💳 PayU (Card/UPI/NB)</span>
+            </label>
+            <label class="cf-pay-opt">
+              <input type="radio" name="cf_payment" value="UPI QR">
+              <span>🔲 UPI QR Code</span>
+            </label>
+          </div>
+          <!-- Dynamic payment panel -->
+          <div id="paymentPanel"></div>
+        </div>
+
+        <!-- RIGHT: Order Summary -->
+        <div class="cf-right">
+          <div class="cf-section-label">🧾 Order Summary</div>
+          <div class="cf-summary-items" id="formSummaryItems"></div>
+          <div class="cf-summary-footer">
+            <div class="cf-sum-row"><span>Delivery Fee</span><span>₹40</span></div>
+            <div class="cf-sum-row total-row"><span>Total Payable</span><span id="formSummaryTotal">₹0</span></div>
+          </div>
+          <div class="cf-db-note">
+            🗄️ Your order will be saved to the <strong>MySQL database</strong> and visible in <strong>phpMyAdmin</strong>
+          </div>
+        </div>
+
+      </div><!-- /cf-grid -->
+
+      <button type="submit" class="cf-submit-btn" id="submitOrderBtn">
+        Place Order 🚀
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     LIVE TRACKING MODAL — Zomato-style animated map tracker
+     ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="track-modal" id="orderModal">
+
+    <!-- Top bar -->
+    <div class="track-topbar">
+      <div class="track-order-info">
+        <span class="track-label">Order</span>
+        <span class="track-orderid" id="modalOrderId">#FR000000</span>
+      </div>
+      <div class="track-eta-pill">
+        <span class="track-eta-icon">🛵</span>
+        <span>Arriving in <strong id="modalEta">30</strong> min</span>
+      </div>
+      <button class="track-close-btn" id="modalClose">✕</button>
+    </div>
+
+    <!-- Status Steps -->
+    <div class="track-steps" id="trackSteps">
+      <div class="ts-step active" id="op1">
+        <div class="ts-dot"><span>✓</span></div>
+        <div class="ts-line"></div>
+        <div class="ts-label">Confirmed</div>
+      </div>
+      <div class="ts-step" id="op2">
+        <div class="ts-dot"><span>👨‍🍳</span></div>
+        <div class="ts-line"></div>
+        <div class="ts-label">Preparing</div>
+      </div>
+      <div class="ts-step" id="op3">
+        <div class="ts-dot"><span>🛵</span></div>
+        <div class="ts-line"></div>
+        <div class="ts-label">On the way</div>
+      </div>
+      <div class="ts-step" id="op4">
+        <div class="ts-dot"><span>🏠</span></div>
+        <div class="ts-line"></div>
+        <div class="ts-label">Delivered</div>
+      </div>
+    </div>
+
+    <!-- Live Map -->
+    <div class="track-map-wrap">
+      <div id="trackMap"></div>
+      <!-- Rider card overlay on map -->
+      <div class="rider-card" id="riderCard">
+        <div class="rider-avatar">🧑‍🦱</div>
+        <div class="rider-info">
+          <div class="rider-name">Ravi Kumar</div>
+          <div class="rider-sub">Your delivery partner</div>
+        </div>
+        <a class="rider-call" href="tel:+919876543210" title="Call rider">📞</a>
+      </div>
+      <!-- ETA countdown overlay -->
+      <div class="map-eta-badge" id="mapEtaBadge">
+        <span id="etaCountdown">30:00</span>
+        <span class="map-eta-label">ETA</span>
+      </div>
+    </div>
+
+    <!-- Status message -->
+    <div class="track-status-msg" id="trackStatusMsg">
+      <span class="tsm-icon">✅</span>
+      <span id="trackStatusText">Your order has been confirmed and sent to the kitchen!</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PHONEPE / PayU PAYMENT GATEWAY MODAL
+     ═══════════════════════════════════════════════════════ -->
+<div class="pay-gateway-overlay" id="payGatewayOverlay">
+  <div class="pay-gateway-modal">
+    <button class="pay-gw-close" id="payGwClose">✕</button>
+
+    <div class="pay-gw-header">
+      <div class="pay-gw-logo">🔥 FoodRush</div>
+      <div class="pay-gw-secure"><span>🔒</span> 100% Secure Payment</div>
+    </div>
+
+    <div class="pay-gw-amount-box">
+      <div class="pay-gw-label">Total Payable</div>
+      <div class="pay-gw-amount" id="gwAmount">₹0</div>
+      <div class="pay-gw-to">Payment goes directly to owner's account</div>
+    </div>
+
+    <!-- Gateway choice -->
+    <div class="gw-choice-row">
+      <button class="gw-choice-btn active" id="gwChoicePhonePe" onclick="switchGateway('phonepe')">
+        <span class="gw-icon phonepe-icon">P</span>
+        <div><strong>PhonePe</strong><small>Instant UPI Payment</small></div>
+      </button>
+      <button class="gw-choice-btn" id="gwChoicePayU" onclick="switchGateway('payu')">
+        <span class="gw-icon payu-icon">₹</span>
+        <div><strong>PayU</strong><small>Card / UPI / Net Banking</small></div>
+      </button>
+    </div>
+
+    <!-- PhonePe Panel -->
+    <div class="gw-panel active" id="panel-phonepe">
+      <div class="phonepe-qr-wrap">
+        <div class="phonepe-qr-label">📱 Scan with PhonePe / any UPI app</div>
+        <div class="qr-canvas-box" id="phonePeQrBox"></div>
+        <div class="upi-pay-to">Pay to: <strong id="phonePeUpiId">owner@ybl</strong></div>
+        <div class="phonepe-amount-badge">₹<span id="phonePeAmt">0</span></div>
+      </div>
+      <div class="pay-divider"><span>or open app directly</span></div>
+      <div class="upi-app-row">
+        <button class="upi-app-pill" onclick="openPhonePeApp()">
+          <span class="phonepe-icon-sm">P</span> Open PhonePe
+        </button>
+        <button class="upi-app-pill gpay" onclick="openGPayApp()">
+          <span>G</span> Google Pay
+        </button>
+        <button class="upi-app-pill bhim" onclick="openBhimApp()">
+          <span>B</span> BHIM UPI
+        </button>
+      </div>
+      <div class="pay-divider"><span>paid? enter transaction ID</span></div>
+      <div class="pay-field">
+        <label>Transaction / UTR ID *</label>
+        <input type="text" id="phonePeTxnId" class="pay-input" placeholder="e.g. T2024123456789" />
+        <small class="pay-hint">Find this in your PhonePe app → History → Transaction ID</small>
+      </div>
+    </div>
+
+    <!-- PayU Panel -->
+    <div class="gw-panel" id="panel-payu">
+      <div class="payu-tabs">
+        <button class="payu-tab active" data-ptab="upi">📱 UPI</button>
+        <button class="payu-tab" data-ptab="card">💳 Card</button>
+        <button class="payu-tab" data-ptab="nb">🏦 Net Banking</button>
+      </div>
+
+      <!-- UPI sub-tab -->
+      <div class="payu-tab-content active" id="ptab-upi">
+        <div class="pay-field">
+          <label>Your UPI ID</label>
+          <input type="text" id="payuUpiId" class="pay-input" placeholder="yourname@okaxis / yourname@ybl" />
+        </div>
+        <div class="payu-upi-note">
+          💡 A collect request will be sent to your UPI app. Approve it to complete payment.<br>
+          Amount credited directly to <strong id="payuOwnerUpi">owner@ybl</strong>
+        </div>
+      </div>
+
+      <!-- Card sub-tab -->
+      <div class="payu-tab-content" id="ptab-card">
+        <div class="pay-field">
+          <label>Card Number</label>
+          <input type="text" id="payu_card" class="pay-input" placeholder="1234 5678 9012 3456" maxlength="19" />
+        </div>
+        <div class="pay-field-row">
+          <div class="pay-field">
+            <label>Expiry</label>
+            <input type="text" id="payu_expiry" class="pay-input" placeholder="MM / YY" maxlength="7" />
+          </div>
+          <div class="pay-field">
+            <label>CVV</label>
+            <input type="text" id="payu_cvv" class="pay-input" placeholder="•••" maxlength="4" />
+          </div>
+        </div>
+        <div class="pay-field">
+          <label>Name on Card</label>
+          <input type="text" id="payu_name" class="pay-input" placeholder="Rahul Sharma" />
+        </div>
+        <div class="payu-card-logos">
+          <span class="card-logo visa">VISA</span>
+          <span class="card-logo mc">MC</span>
+          <span class="card-logo rupay">RuPay</span>
+          <span class="card-logo amex">Amex</span>
+        </div>
+      </div>
+
+      <!-- Net Banking sub-tab -->
+      <div class="payu-tab-content" id="ptab-nb">
+        <div class="bank-grid">
+          <button class="bank-btn active" data-bank="SBI">🏛️ SBI</button>
+          <button class="bank-btn" data-bank="HDFC">🏦 HDFC</button>
+          <button class="bank-btn" data-bank="ICICI">🏢 ICICI</button>
+          <button class="bank-btn" data-bank="Axis">💼 Axis</button>
+          <button class="bank-btn" data-bank="Kotak">🏗️ Kotak</button>
+          <button class="bank-btn" data-bank="PNB">🏛️ PNB</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="pay-now-btn" id="payNowBtn">
+      <span id="payNowText">Confirm Payment 🔒</span>
+      <div class="pay-spinner" id="paySpinner" style="display:none"></div>
+    </button>
+
+    <div class="pay-gw-footer">
+      <span>🔒 256-bit SSL</span><span>•</span>
+      <span>PCI-DSS Compliant</span><span>•</span>
+      <span>Instant Settlement to Owner</span>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/payment.js"></script>
+</body>
+</html>
